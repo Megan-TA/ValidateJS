@@ -44,6 +44,15 @@
             element.attachEvent('on' + type, callback)
         }
     }
+    // 两个对象合并
+    function extend (o1, o2) {
+        for (var item in o2) {
+            if (!o1.hasOwnProperty(item)) {
+                o1[item] = o2[item]
+            }
+        }
+        return o1
+    }
     /**
      * 
      * @param {以对象的形式传入要验证的内容} config 
@@ -86,44 +95,12 @@
             var self = this
             var temp
             var $targetDom
-            var resultOnoff = true
+            var resultOnoff
             // 添加一个钩子实现单个input验证触发
             if (hook != null) {
-                Object.keys(config).forEach(function (item, key) {
-                    if (item === hook) {
-                        $targetDom = self.inputObj[item]
-
-                        for (var i in config[item]) {
-                            
-                            result = self.formValidate.Check[i].call(self, $targetDom.value)
-                            if (!result) {
-                                self.showTips($targetDom, config[item][i].err)
-                                resultOnoff = false
-                                break
-                            }
-                        }
-                    }
-                })
+                resultOnoff = this.oneValidated(config, hook)
             } else {
-                var self = this
-                var result
-                // 默认全部input校验
-                for (var i in config) {
-                    temp = config[i]
-                    $targetDom = self.inputObj[i]
-                    // 选填、必填项判断
-                    result = this.required(temp, $targetDom)
-                    if (!result) {
-                        for (var j in temp) {
-                            result = self.formValidate.Check[j].call(this, $targetDom.value)
-                            if (!result) {
-                                this.showTips($targetDom, temp[j].err)
-                                resultOnoff = false
-                                break
-                            }
-                        }
-                    } 
-                }
+                resultOnoff = this.allValidated(config)
             }
 
             if (resultOnoff) {
@@ -149,6 +126,65 @@
             return false
         }
 
+        // 遍历 找出失焦验证的对应的name
+        this.blur = function ($targetDom) {
+            var self = this
+            for (var i in self.inputObj) {
+                if (self.inputObj[i] == $targetDom) {
+                    self.trigger(i)
+                    break
+                }
+            }
+        }
+        // 单个验证
+        this.oneValidated = function (config, hook) {
+            var self = this
+            var $targetDom
+            var result
+            var resultOnoff = true
+            Object.keys(config).forEach(function (item, key) {
+                if (item === hook) {
+                    $targetDom = self.inputObj[item]
+                    for (var i in config[item]) {
+                        if (i == 'blur') continue
+                        result = self.formValidate.Check[i].call(self, $targetDom.value)
+                        if (!result) {
+                            self.showTips($targetDom, config[item][i].err)
+                            resultOnoff = false
+                            break
+                        }
+                    }
+                }
+            })
+            return resultOnoff
+        }
+        // 全部验证
+        this.allValidated = function (config) {
+            var self = this
+            var result
+            var $targetDom
+            var temp
+            var resultOnoff = true
+            // 默认全部input校验
+            for (var i in config) {
+                temp = config[i]
+                $targetDom = self.inputObj[i]
+                // 选填、必填项判断
+                result = this.required(temp, $targetDom)
+                if (!result) {
+                    for (var j in temp) {
+                        if (j == 'blur') continue
+                        result = self.formValidate.Check[j].call(this, $targetDom.value)
+                        if (!result) {
+                            this.showTips($targetDom, temp[j].err)
+                            resultOnoff = false
+                            break
+                        }
+                    }
+                } 
+            }
+            return resultOnoff
+        }
         this.init = function (config) {
             var self = this
             var $targetDom
@@ -159,6 +195,12 @@
                 addEventListener($targetDom, 'focus', function () {
                     self.hideTips(this)
                 })
+                // 判断是否增加失焦验证
+                if (config[i].hasOwnProperty('blur')) {
+                    addEventListener($targetDom, 'blur', function (event, i) {
+                        self.blur(this)
+                    })
+                }
             }
             // 点击空白处关闭错误提示
             addEventListener(document.body, 'click', function (event) {
@@ -194,6 +236,15 @@
     Validate.prototype.rules = {
         email: /^[\w-]+@[\w-]+\.[a-zA-Z]{2,4}$/,
         number: /^\d+$/
+    }
+    Validate.prototype.extend = function (extendObj) {
+        extend(this.rules, extendObj)
+        for (var key in extendObj) {
+            this.formValidate.Check[key] = function (val) {
+                if (!this.rules[key].test(val)) return false
+                return true
+            }
+        }
     }
     return Validate
 })))
