@@ -59,7 +59,7 @@ Validate.prototype.extend({
 var test = new Validate({
    'data-valid-email': {
         required: {
-            err: '请输入正确的邮箱'
+            err: '邮箱不能为空'
         },
         'IsEmail': {
             err: '邮箱格式不正确'
