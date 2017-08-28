@@ -5,6 +5,7 @@
 * 没有模块化环境中直接window.Validate
 
 > ### 相关用法
+* input必须用div包住 验证的input加上data-valid-名称 类似的属性
 * trigger
 
   默认通过trigger()方法触发所有input验证
