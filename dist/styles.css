@@ -1,0 +1,135 @@
+/* 弹层 layer.js */
+div[data-common-layer] {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background: rgba(0,0,0,0.3);
+/* filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#4C000000,endColorstr=#4C000000); */
+  z-index: 9;
+}
+.common-layer-box {
+  width: 418px;
+  overflow: hidden;
+  border: #67a1e2 solid 1px;
+  background: #fff;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  margin-left: -209px;
+}
+.common-layer-box.loading {
+  border: 0;
+}
+.common-layer-box h2 {
+  font-size: 14px;
+  height: 30px;
+  line-height: 30px;
+  background: #e9f5ff;
+  padding-left: 10px;
+  padding-right: 20px;
+  position: relative;
+}
+.tools-pop-main {
+  padding: 20px 0;
+}
+.tools-pop-main p {
+  margin-bottom: 10px;
+  text-align: center;
+  height: 32px;
+  line-height: 32px;
+  color: #4d4d4d;
+}
+.tools-icon-success {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  margin-right: 5px;
+  background: url("http://pic.c-ctrip.com/scenic_htl/meeting/mticon5.png") -29px 0 no-repeat;
+  vertical-align: -12px;
+}
+.tools-icon-failure {
+  display: inline-block;
+  width: 29px;
+  height: 32px;
+  margin-right: 5px;
+  background: url("http://pic.c-ctrip.com/scenic_htl/meeting/mticon5.png") 0 0 no-repeat;
+  vertical-align: -12px;
+}
+.tools-pop-btn {
+  width: 60px;
+  height: 24px;
+  border: #05a solid 1px;
+  background: #27c;
+  display: block;
+  color: #fff;
+  text-align: center;
+  line-height: 24px;
+  box-shadow: 0 1px 2px #37b;
+  border-radius: 2px;
+  margin: 0 auto 5px;
+  cursor: pointer;
+}
+.tools-close-icon {
+  overflow: hidden;
+  position: absolute;
+  background: url("http://pic.c-ctrip.com/scenic_htl/meeting/mticon2.png?2016") no-repeat;
+  background-position: -41px -238px;
+  width: 10px;
+  height: 10px;
+  background-position: -360px -277px;
+  right: 10px;
+  top: 10px;
+  cursor: pointer;
+}
+.tools-loading-content {
+  padding-top: 50px;
+  padding-bottom: 50px;
+  text-align: center;
+}
+.tools-loading-content img {
+  display: block;
+  margin: 0 auto;
+}
+.tools-loading-content p {
+  color: #aaa;
+}
+.hidden {
+  display: none !important;
+}
+/* 验证ValidateJS样式 */
+div[data-error-tips="true"] {
+  top: 0px;
+  left: 283px;
+  position: absolute;
+  z-index: 20;
+  border: 1px solid #ffb533;
+  background: #fff5d1;
+  padding: 3px;
+}
+div[data-error-tips="true"] i {
+  display: block;
+  width: 0px;
+  height: 0px;
+  border-style: solid;
+  border-left: 0;
+  border-color: transparent #fff5d1 transparent;
+  border-width: 5px;
+  position: absolute;
+  left: -5px;
+  top: 6px;
+  z-index: 11;
+}
+div[data-error-tips="true"] b {
+  display: block;
+  width: 0px;
+  height: 0px;
+  border-style: solid;
+  border-left: 0;
+  border-color: transparent #ffb533 transparent;
+  border-width: 5px;
+  position: absolute;
+  left: -6px;
+  top: 6px;
+}
