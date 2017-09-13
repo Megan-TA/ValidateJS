@@ -2,9 +2,9 @@
  * 参照之前ValidateJs仿写的正则相关验证
  * 支持IE8及以上
  * @Author: chen_huang
- * @Date: 2017-08-23 10:07:06
+ * @Date: 
  * @Last Modified by: chen_huang
- * @Last Modified time: 2017-09-11 17:49:58
+ * @Last Modified time: 2017-09-13 10:48:27
  *
  * 文档
  * 默认点击空白处不关闭错误提示  如果以后存在这样的需求再加上
@@ -154,37 +154,37 @@
         // 遍历 找出失焦验证的对应的name
         // 直接失焦验证的情况下不会触发delegate allValidate的时候触发
         this.blur = function ($targetDom) {
-            var self = this
+            var that = this
             var val = $targetDom.value
             // 兼容Cquery
             if ($targetDom.className.indexOf('inputSel') > -1) val = $($targetDom).value()
             // 值为空的情况不做判断
             if (val == null || val.length == 0) return
-            for (var i in self.inputObj) {
-                if (self.inputObj[i] == $targetDom) {
-                    self.state.blurDelegate = false
-                    self.trigger(i)
+            for (var i in that.inputObj) {
+                if (that.inputObj[i] == $targetDom) {
+                    that.state.blurDelegate = false
+                    that.trigger(i)
                     break
                 }
             }
         }
         // 单个验证
         this.oneValidated = function (config, hook) {
-            var self = this
+            var that = this
             var $targetDom
             var resultOnoff = true
             Object.keys(config).forEach(function (item, key) {
                 if (item === hook) {
-                    $targetDom = self.inputObj[item]
+                    $targetDom = that.inputObj[item]
                     var temp = config[item]
-                    resultOnoff = self.judge(temp, $targetDom)
+                    resultOnoff = that.judge(temp, $targetDom)
                 }
             })
             return resultOnoff
         }
         // 全部验证
         this.allValidated = function (config) {
-            var self = this
+            var that = this
             var resultOnoff = true
             var $targetDom
             var temp
@@ -192,19 +192,16 @@
             var result
             // 默认全部input校验
             for (var i in config) {
-                // 找到一个非法则停止验证
-                // if (this.state.illegality && this.state.illegality == true) {
-                //     resultOnoff = false
-                //     break
-                // }
                 temp = config[i]
-                $targetDom = self.inputObj[i]
+                $targetDom = that.inputObj[i]
                 val = $targetDom.value
                 if ($targetDom.className.indexOf('inputSel') > -1) val = $($targetDom).value()
-                // 选填、必填项判断   false: 必填项 
+                // 选填、必填项判断   false: 必填项 只为了判断是否要验证 故需要验证之后还要再做一次严格判断
                 result = this.required(temp, val)
                 if (!result) {
-                    resultOnoff = self.judge(temp, $targetDom)
+                    resultOnoff = that.judge(temp, $targetDom)
+                    // 找到一个非法则停止验证
+                    if (!resultOnoff) break
                 }
             }
             return resultOnoff
@@ -216,7 +213,7 @@
             var len = val.length
             var argsArr
             var resultOnoff = true
-            var self = this
+            var that = this
             // 兼容生产的cQuery控件
             if ($targetDom.className.indexOf('inputSel') > -1) val = $($targetDom).value()
             // 兼容只写回调函数的delegate验证情况
@@ -228,7 +225,7 @@
                 // 失焦判断
                 if (j == 'blur') continue
                 if (j == 'delegate') continue
-                if (self.formValidate.Check[j] == null) console.error('实例属性中不存在' + j + '属性')
+                if (that.formValidate.Check[j] == null) console.error('实例属性中不存在' + j + '属性')
                 // 最小值最大值判断
                 if (j == 'len') {
                     if (!temp[j]['args']) console.error('args为空')
@@ -236,35 +233,35 @@
                     argsArr = temp[j]['args']
                     // 只有一个参数为最小值
                     if (argsArr.length == 0) {
-                        result = self.formValidate.Check[j].call(self, argsArr[0], null, len)
+                        result = that.formValidate.Check[j].call(that, argsArr[0], null, len)
                     } else {
-                        result = self.formValidate.Check[j].call(self, argsArr[0], argsArr[1], len)
+                        result = that.formValidate.Check[j].call(that, argsArr[0], argsArr[1], len)
                     }
                 } else {
-                    result = self.formValidate.Check[j].call(self, val)
+                    result = that.formValidate.Check[j].call(that, val)
                 }
                 if (!result) {
-                    if (temp['delegate'] && self.state.blurDelegate == true) {
+                    if (temp['delegate'] && that.state.blurDelegate == true) {
                         if (typeof (temp['delegate']['args']) === 'function') temp['delegate']['args']()
                     }
-                    self.showTips($targetDom, temp[j].err)
+                    that.showTips($targetDom, temp[j].err)
                     resultOnoff = false
-                    // self.state.illegality = true
+                    break
                 }
             }
             return resultOnoff
         }
         this.init = function (config) {
-            var self = this
+            var that = this
             var $targetDom
             for (var i in config) {
                 $targetDom = document.querySelector('[' + i + ']')
                 if ($targetDom == null) console.error('没有找到属性为' + i + '相应的DOM')
                 // 记录要验证的input的属性名和对应的input的dom结构
-                self.inputObj[i] = $targetDom
+                that.inputObj[i] = $targetDom
                 addEventListener($targetDom, 'focus', function (event) {
                     event = event || window.event
-                    self.hideTips(this)
+                    that.hideTips(this)
                     if (event.cancelBubble) {
                         event.cancelBubble = true
                     } else {
@@ -275,7 +272,7 @@
                 addEventListener($targetDom, 'keydown', function (event) {
                     event = event || window.event
                     var errTip = this.parentNode.querySelector('[data-error-tips="true"]')
-                    if (errTip && errTip.className == '') self.hideTips(this)
+                    if (errTip && errTip.className == '') that.hideTips(this)
                     if (event.cancelBubble) {
                         event.cancelBubble = true
                     } else {
@@ -287,7 +284,7 @@
                 if (config[i].hasOwnProperty('blur')) {
                     addEventListener($targetDom, 'blur', function (event, i) {
                         event = event || window.event
-                        self.blur(this)
+                        that.blur(this)
                         if (event.cancelBubble) {
                             event.cancelBubble = true
                         } else {
