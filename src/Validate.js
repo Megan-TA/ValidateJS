@@ -4,7 +4,7 @@
  * @Author: chen_huang
  * @Date: 
  * @Last Modified by: chen_huang
- * @Last Modified time: 2017-09-13 10:48:27
+ * @Last Modified time: 2017-09-20 14:02:20
  *
  * 文档
  * 默认点击空白处不关闭错误提示  如果以后存在这样的需求再加上
@@ -101,8 +101,8 @@
                 // aDiv.style.cssText += ';position:absolute;z-index:20;border:1px solid #FFB533;background:#FFF5D1;padding:3px'
                 // ai.style.cssText += ';display: block;width: 0px;height: 0px;border-style: solid;border-left: 0;border-color: transparent #FFF5D1 transparent;border-width: 5px;position: absolute;left: -5px;top: 6px;z-index: 11'
                 // ab.style.cssText += ';display: block;width: 0px;height: 0px;border-style: solid;border-left: 0;border-color: transparent #FFB533 transparent;border-width: 5px;position: absolute;left: -5px;top: 6px'
-                aDiv.append(ai)
-                aDiv.append(ab)
+                aDiv.appendChild(ai)
+                aDiv.appendChild(ab)
                 $targetDom.setAttribute('data-valid-tip', 'true')
                 $targetParent.appendChild(aDiv)
             } else {
@@ -319,6 +319,10 @@
     Validate.prototype.formValidate = {
         Check: {
             required: function (val) {
+                if (val == null || val.length == 0) return false
+                return true
+            },
+            IsNullOrEmpty: function (val) {
                 if (val == null || val.length == 0) return false
                 return true
             },
